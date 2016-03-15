@@ -1,0 +1,21 @@
+Application smartphone Windows phone permettant d’envoyer le lien d’un fichier vidéo à télécharger à un PC.
+Le PC en question contient un service qui se charge de télécharger le fichier grâce à l’URL reçu par le smartphone.
+On pourrait également stocker la liste des films téléchargés ainsi que leurs informations (via des tags) dans une BDD afin de pouvoir afficher ces informations sur le smartphone.
+Un objectif secondaire serait d’éventuellement streamer les films sur le smartphone.
+
+Objectif primaire :
+	- Côté smartphone :
+		o Création de l’application
+		o Intégré un web browser à l’application
+		o Création d’un formulaire permettant de spécifier l’URL du fichier + nom à attribuer au fichier
+		o Afficher l’état des téléchargements et les informations présentes dans la BDD
+	- Côté PC :
+		o Création d’un service
+		o Création de la BDD
+		o Télécharger le fichier grâce à l’URL reçu
+		o Extraire du fichier télécharger les tags afin de les stocké dans la BDD
+		o Donner des informations au smartphone sur l’état du téléchargement
+
+Objectif secondaire :
+	- Streamer le contenu du fichier vidéo sur le smartphone
+	- Dézipper les archives si le fichier télécharger est un « .rar » ou « .zip »
