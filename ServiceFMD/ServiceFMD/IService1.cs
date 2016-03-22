@@ -14,6 +14,7 @@ namespace ServiceFMD
     {
 
         [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string GetData(int value);
 
         [OperationContract]
