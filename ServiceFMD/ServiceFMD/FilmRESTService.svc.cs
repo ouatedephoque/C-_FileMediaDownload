@@ -14,7 +14,14 @@ namespace ServiceFMD
 
         public List<Film> GetFilmList()
         {
-            return Films.Instance.FilmList;
+            List<Film> filmList = new List<Film>();
+
+            using (var db = new FilmingContext())
+            {
+                filmList = db.Films.ToList();
+            }
+
+            return filmList;
         }
     }
 }
