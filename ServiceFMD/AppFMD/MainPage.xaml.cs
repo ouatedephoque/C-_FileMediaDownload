@@ -31,6 +31,12 @@ namespace AppFMD
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            List<String> ListFile = new List<String>();
+            ListFile.Add("Coucou");
+            ListFile.Add("Hello");
+
+            this.ListBoxDownloadFile.DataContext = ListFile;
         }
 
         /// <summary>
@@ -67,14 +73,22 @@ namespace AppFMD
             return returnString;
         }
 
-        private async void BtnGetData_Click(object sender, RoutedEventArgs e)
+        private void AddNewFileDownloadPage_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(DownloadFileForm));
+        }
+
+        private void SettingsPage_Click(object sender, RoutedEventArgs e)
+        {
+            //Frame.Navigate(typeof(SettingsForm));
+        }
+
+        /*private async void BtnGetData_Click(object sender, RoutedEventArgs e)
         {
             String data = await WCFRestServiceCall("POST", "GetData", "19");
 
             var dialog = new MessageDialog(data);
             await dialog.ShowAsync();
-
-            Solution.Text = data;
-        }
+        }*/
     }
 }

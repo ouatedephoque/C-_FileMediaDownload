@@ -8,8 +8,32 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Add" Name="AddNewFileDownloadPage" Click="AddNewFileDownloadPage_Click"/>
+                <AppBarButton Icon="Setting" Name="SettingsPage" Click="SettingsPage_Click" />
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
     <Grid>
-        <TextBlock Name="Solution" Text="Salut" FontSize="26.667" FontWeight="Bold" />
-        <Button Name="BtnGetData" Content="Get Data" Click="BtnGetData_Click" />
+        <ListBox Name="ListBoxDownloadFile" Margin="10 10 10 10" ItemsSource="{Binding}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="White">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Titre" Grid.Row="0" FontSize="28" />
+                        <TextBlock Text="Progression" Grid.Row="1" FontSize="28" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Page>
