@@ -13,7 +13,7 @@ namespace ServiceFMD
     public interface IFilmRESTService
     {
         [OperationContract]
-        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Xml, BodyStyle = WebMessageBodyStyle.Bare, UriTemplate = "GetFilmList/")]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "GetFilmList/")]
         List<Film> GetFilmList();
     }
 }

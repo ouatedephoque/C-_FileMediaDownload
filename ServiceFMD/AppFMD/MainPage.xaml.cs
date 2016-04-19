@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -26,17 +28,18 @@ namespace AppFMD
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Settings settings;
         public MainPage()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.settings = new Settings();
 
             List<String> ListFile = new List<String>();
-            ListFile.Add("Coucou");
-            ListFile.Add("Hello");
+            GetListFilmsComputer();
 
-            this.ListBoxDownloadFile.DataContext = ListFile;
+            ListBoxDownloadFile.DataContext = ListFile;
         }
 
         /// <summary>
@@ -55,9 +58,9 @@ namespace AppFMD
             // cet événement est géré automatiquement.
         }
 
-        private async Task<String> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
+        private async Task<Stream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
         {
-            string ServiceURI = "http://192.168.178.20:51589/Service1.svc/rest/" + methodName;
+            string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "/";
             HttpClient httpClient = new HttpClient();
 
             HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
@@ -68,9 +71,21 @@ namespace AppFMD
             }
 
             HttpResponseMessage response = await httpClient.SendAsync(request);
-            string returnString = await response.Content.ReadAsStringAsync();
+            byte[] data = await request.Content.ReadAsByteArrayAsync();
+            Stream stream = new MemoryStream(data);
 
-            return returnString;
+            //string returnString = await response.Content.ReadAsStringAsync();
+
+            return stream;
+        }
+
+        private async void GetListFilmsComputer()
+        {
+            Stream stream = await WCFRestServiceCall("GET", "GetFilmList", "");
+
+            /*DataContractJsonSerializer obj = new DataContractJsonSerializer(typeof(Film));
+
+            List<Film> list = obj.ReadObject(stream) as List<Film>;*/
         }
 
         private void AddNewFileDownloadPage_Click(object sender, RoutedEventArgs e)
@@ -80,7 +95,7 @@ namespace AppFMD
 
         private void SettingsPage_Click(object sender, RoutedEventArgs e)
         {
-            //Frame.Navigate(typeof(SettingsForm));
+            Frame.Navigate(typeof(SettingsForm));
         }
 
         /*private async void BtnGetData_Click(object sender, RoutedEventArgs e)
