@@ -29,8 +29,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Titre" Grid.Row="0" FontSize="28" />
-                        <TextBlock Text="Progression" Grid.Row="1" FontSize="28" />
+                        <TextBlock Text="{Binding FilmName}" Grid.Row="0" FontSize="28" />
+                        <TextBlock Text="{Binding FilmProgressionAffichage}" Grid.Row="1" FontSize="28" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

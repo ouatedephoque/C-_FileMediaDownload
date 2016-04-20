@@ -16,5 +16,13 @@ namespace AppFMD
 
         [DataMember]
         public float FilmProgression { get; set; }
+
+        public string FilmProgressionAffichage
+        {
+            get
+            {
+                return this.FilmProgression + "%";
+            }
+        }
     }
 }

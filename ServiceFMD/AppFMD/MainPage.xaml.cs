@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Services.Maps;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,6 +19,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -29,6 +33,8 @@ namespace AppFMD
     public sealed partial class MainPage : Page
     {
         private Settings settings;
+        private ObservableCollection<Film> listAllFilms;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -36,10 +42,10 @@ namespace AppFMD
             this.NavigationCacheMode = NavigationCacheMode.Required;
             this.settings = new Settings();
 
-            List<String> ListFile = new List<String>();
+            this.listAllFilms = new ObservableCollection<Film>();
             GetListFilmsComputer();
 
-            ListBoxDownloadFile.DataContext = ListFile;
+            ListBoxDownloadFile.ItemsSource = this.listAllFilms;
         }
 
         /// <summary>
@@ -58,34 +64,47 @@ namespace AppFMD
             // cet événement est géré automatiquement.
         }
 
-        private async Task<Stream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
+        private async Task<MemoryStream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
         {
-            string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "/";
-            HttpClient httpClient = new HttpClient();
+            //if (isIP(settings.IpComputer))
+            //{
+                //string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "/";
+                string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
+                HttpClient httpClient = new HttpClient();
 
-            HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
+                HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
 
-            if (!string.IsNullOrEmpty(bodyParam))
-            {
-                request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
-            }
+                if (!string.IsNullOrEmpty(bodyParam))
+                {
+                    request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
+                }
 
-            HttpResponseMessage response = await httpClient.SendAsync(request);
-            byte[] data = await request.Content.ReadAsByteArrayAsync();
-            Stream stream = new MemoryStream(data);
+                HttpResponseMessage response = await httpClient.SendAsync(request);
 
-            //string returnString = await response.Content.ReadAsStringAsync();
+                string returnString = await response.Content.ReadAsStringAsync();
+                byte[] data = Encoding.UTF8.GetBytes(returnString);
+                MemoryStream stream = new MemoryStream(data);
 
-            return stream;
+                return stream;
+            //}
+            //return null;
         }
 
         private async void GetListFilmsComputer()
         {
-            Stream stream = await WCFRestServiceCall("GET", "GetFilmList", "");
-
-            /*DataContractJsonSerializer obj = new DataContractJsonSerializer(typeof(Film));
-
-            List<Film> list = obj.ReadObject(stream) as List<Film>;*/
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Film>));
+            MemoryStream memStream = await WCFRestServiceCall("GET", "GetFilmList", "");
+            
+            if (memStream != null)
+            {
+                List<Film> list = (List<Film>)serializer.ReadObject(memStream);
+                
+                foreach(Film f in list)
+                {
+                    listAllFilms.Add(f);
+                    System.Diagnostics.Debug.WriteLine("Added");
+                }
+            }
         }
 
         private void AddNewFileDownloadPage_Click(object sender, RoutedEventArgs e)
@@ -105,5 +124,11 @@ namespace AppFMD
             var dialog = new MessageDialog(data);
             await dialog.ShowAsync();
         }*/
+
+        public Boolean isIP(String ipStr)
+        {
+            Match match = Regex.Match(ipStr, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
+            return match.Success;
+        }
     }
 }
