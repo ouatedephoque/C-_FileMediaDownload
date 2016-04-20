@@ -16,9 +16,14 @@ namespace ServiceFMD
             get { return _instance; }
         }
 
-        public List<Film> FilmList
+        public List<Film> GetFilmList
         {
             get { return films; }
+        }
+
+        public void AddFilm(Film film)
+        {
+            films.Add(film);
         }
 
         public List<Film> films = new List<Film>()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -14,14 +15,18 @@ namespace ServiceFMD
 
         public List<Film> GetFilmList()
         {
-            List<Film> filmList = new List<Film>();
+            Films mesFilms = Films.Instance;
+            
+            return mesFilms.GetFilmList;
+        }
 
-            using (var db = new FilmingContext())
-            {
-                filmList = db.Films.ToList();
-            }
+        public List<Film> PostAddFilm(Film film)
+        {
+            Films mesFilms = Films.Instance;
 
-            return filmList;
+            mesFilms.AddFilm(film);
+
+            return mesFilms.GetFilmList;
         }
     }
 }

@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Film.cs" />
-    <Compile Include="FilmingContext.cs" />
     <Compile Include="FilmRESTService.svc.cs">
       <DependentUpon>FilmRESTService.svc</DependentUpon>
     </Compile>
