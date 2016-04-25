@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization.Json;
@@ -27,10 +28,14 @@ namespace AppFMD
     /// </summary>
     public sealed partial class DownloadFileForm : Page
     {
+        private Settings settings;
+        private Film filmToDownload;
+
         public DownloadFileForm()
         {
             this.InitializeComponent();
 
+            this.settings = new Settings();
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
 
@@ -52,14 +57,23 @@ namespace AppFMD
         /// Ce paramètre est généralement utilisé pour configurer la page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            this.filmToDownload = e.Parameter as Film;
+
+            if(this.filmToDownload == null)
+            {
+                this.filmToDownload = new Film();
+                this.filmToDownload.FilmLink = "";
+            }
+
+            TextBoxUrl.Text = this.filmToDownload.FilmLink;
         }
 
-        private async Task<MemoryStream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
+        private async Task<String> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
         {
             //if (isIP(settings.IpComputer))
             //{
-            //string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "/";
-            string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
+            string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "";
+            //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "";
             HttpClient httpClient = new HttpClient();
 
             HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
@@ -68,6 +82,10 @@ namespace AppFMD
             {
                 request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
             }
+            System.Diagnostics.Debug.WriteLine(bodyParam);
+
+            System.Diagnostics.Debug.WriteLine(request.Content);
+            System.Diagnostics.Debug.WriteLine(request.ToString());
 
             HttpResponseMessage response = await httpClient.SendAsync(request);
 
@@ -75,31 +93,29 @@ namespace AppFMD
             byte[] data = Encoding.UTF8.GetBytes(returnString);
             MemoryStream stream = new MemoryStream(data);
 
-            return stream;
+            return returnString;
             //}
             //return null;
         }
 
         private async void ButtonDownload_Click(object sender, RoutedEventArgs e)
         {
-            String title = TextBoxTitle.Text;
             String url = TextBoxUrl.Text;
 
-            Film f = new Film()
-            {
-                FilmLink = url,
-                FilmName = title,
-                FilmProgression = 0
-            };
+            this.filmToDownload.FilmTitle = TextBoxTitle.Text.ToString();
+            this.filmToDownload.FilmLink = url;
+            this.filmToDownload.FilmPourcent = 0;
+            this.filmToDownload.FilmExtension = FilmTools.getExtensionFilmOrDefault(url);
 
             MemoryStream stream = new MemoryStream();
             DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Film));
-            jsonSerializer.WriteObject(stream, f);
+            jsonSerializer.WriteObject(stream, this.filmToDownload);
             stream.Position = 0;
             StreamReader reader = new StreamReader(stream);
-
-            System.Diagnostics.Debug.WriteLine(reader.ReadToEnd());
-            MemoryStream memStream = await WCFRestServiceCall("POST", "GetFilmList", reader.ReadToEnd());
+            
+            String memStream = await WCFRestServiceCall("POST", "PostAddFilm/New", reader.ReadToEnd());
+            
+            System.Diagnostics.Debug.WriteLine(memStream);
         }
     }
 }

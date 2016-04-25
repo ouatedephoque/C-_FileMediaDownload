@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="AppFMD.WebPageLink"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AppFMD"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <WebView Name="WebViewDivx" Source="http://www.divxcrawler.tv" Grid.Row="0" IsHoldingEnabled="True" IsRightTapEnabled="True" IsTapEnabled="True" NavigationStarting="WebViewDivx_NavigationStarting" />
+        <Button Name="ButtonBackHome" Content="Retourner à l'accueil" Grid.Row="1" HorizontalAlignment="Center" Width="{Binding ElementName=WindowFileDownload, Path=ActualWidth}" Click="ButtonBackHome_Click" />
+    </Grid>
+</Page>

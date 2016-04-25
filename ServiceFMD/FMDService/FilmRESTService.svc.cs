@@ -1,7 +1,5 @@
-﻿using ServiceFMD;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,29 +17,39 @@ namespace ServiceFMD
 
         public List<Film> GetFilmList()
         {
+            /*Films mesFilms = Films.Instance;
+            
+            return mesFilms.GetFilmList;*/
+
             List<Film> films = new List<Film>();
 
-            using (var ctx = new FMDModel())
+            /*using (var ctx = new FilmFMDContext())
             {
-                films = ctx.film.AsNoTracking().ToList();
-            }
+                films = ctx.FilmsFMD.ToList();
+            }*/
 
             return films;
         }
 
-        public List<Film> PostAddFilm(Film f)
+        public List<Film> PostAddFilm(Film film)
         {
+            /*Films mesFilms = Films.Instance;
+
+            mesFilms.AddFilm(film);
+
+            downloadNewFile(film);*/
+
             List<Film> films = new List<Film>();
 
-            using (var ctx = new FMDModel())
+            /*using (var ctx = new FilmFMDContext())
             {
-                ctx.film.Add(f);
+                ctx.FilmsFMD.Add(film);
                 ctx.SaveChanges();
 
-                downloadNewFile(f);
+                downloadNewFile(film);
 
-                films = ctx.film.ToList();
-            }
+                films = ctx.FilmsFMD.ToList();
+            }*/
 
             return films;
         }
@@ -55,9 +63,7 @@ namespace ServiceFMD
                 dictionnaryFilmWebClient.Add(wc, film);
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadDataCompleted += Wc_DownloadDataCompleted;
-
-                String user = OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name;
-                wc.DownloadFileAsync(new System.Uri(film.FilmLink), "C:\\Users\\" + user + "\\Videos\\FMD\\"+(film.FilmTitle) +"."+(film.FilmExtension));
+                wc.DownloadFileAsync(new System.Uri(film.FilmLink), "C:\\Users\\leonardo.distasio\\Videos\\FMD\\"+(film.FilmName)+"."+(film.FilmExtension));
             }
         }
 
@@ -66,13 +72,12 @@ namespace ServiceFMD
             var webclient = (WebClient)sender;
             Film f = dictionnaryFilmWebClient[webclient];
 
-            using (var ctx = new FMDModel())
+            /*using (var ctx = new FilmFMDContext())
             {
-                Film filmDB = ctx.film.First(film => film.FilmLink.Equals(f.FilmLink) && film.FilmTitle.Equals(f.FilmTitle));
-                ctx.Entry(filmDB).State = System.Data.Entity.EntityState.Modified;
-                filmDB.FilmPourcent = 100;
+                Film filmDB = ctx.FilmsFMD.Where(film => film.FilmLink.Equals(f.FilmLink) && film.FilmName.Equals(f.FilmName)).ToList().ElementAt(0);
+                filmDB.FilmProgression = 100;
                 ctx.SaveChanges();
-            }
+            }*/
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -80,17 +85,13 @@ namespace ServiceFMD
             var webclient = (WebClient)sender;
             Film f = dictionnaryFilmWebClient[webclient];
 
-            using (var ctx = new FMDModel())
+            /*using (var ctx = new FilmFMDContext())
             {
-                Film filmDB = ctx.film.First(film => film.FilmLink.Equals(f.FilmLink) && film.FilmTitle.Equals(f.FilmTitle));
-
-                if (filmDB.FilmPourcent < e.ProgressPercentage)
-                {
-                    filmDB.FilmPourcent = e.ProgressPercentage;
-                    ctx.Entry(filmDB).State = System.Data.Entity.EntityState.Modified;
-                    ctx.SaveChanges();
-                }
-            }
+                Film filmDB = ctx.FilmsFMD.Where(film => film.FilmLink.Equals(f.FilmLink) && film.FilmName.Equals(f.FilmName)).ToList().ElementAt(0);
+                filmDB.FilmProgression = e.ProgressPercentage;
+                ctx.SaveChanges();
+                ((IObjectContextAdapter)ctx).ObjectContext.Refresh(System.Data.Entity.Core.Objects.RefreshMode.StoreWins, filmDB);
+            }*/
         }
     }
 }

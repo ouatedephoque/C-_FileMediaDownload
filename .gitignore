@@ -1,0 +1,5 @@
+/ServiceFMD/.vs
+/ServiceFMD/packages
+*bin
+*obj
+*App_Data

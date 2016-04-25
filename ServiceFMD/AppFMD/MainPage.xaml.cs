@@ -22,6 +22,8 @@ using Windows.UI.Xaml.Navigation;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Runtime.InteropServices;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -43,6 +45,7 @@ namespace AppFMD
             this.settings = new Settings();
 
             this.listAllFilms = new ObservableCollection<Film>();
+
             GetListFilmsComputer();
 
             ListBoxDownloadFile.ItemsSource = this.listAllFilms;
@@ -68,8 +71,8 @@ namespace AppFMD
         {
             //if (isIP(settings.IpComputer))
             //{
-                //string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "/";
-                string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
+                string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName;
+                //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
                 HttpClient httpClient = new HttpClient();
 
                 HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
@@ -92,17 +95,27 @@ namespace AppFMD
 
         private async void GetListFilmsComputer()
         {
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Film>));
-            MemoryStream memStream = await WCFRestServiceCall("GET", "GetFilmList", "");
-            
+            while(true)
+            {
+                LoadFilmsList();
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+        }
+
+        private async void LoadFilmsList()
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Film>));
+            MemoryStream memStream = await WCFRestServiceCall("GET", "GetFilmList/", "");
+
             if (memStream != null)
             {
                 List<Film> list = (List<Film>)serializer.ReadObject(memStream);
-                
-                foreach(Film f in list)
+                listAllFilms.Clear();
+
+                foreach (Film f in list)
                 {
                     listAllFilms.Add(f);
-                    System.Diagnostics.Debug.WriteLine("Added");
+                    System.Diagnostics.Debug.WriteLine(f.FilmId + " " + f.FilmPourcent);
                 }
             }
         }
@@ -117,18 +130,25 @@ namespace AppFMD
             Frame.Navigate(typeof(SettingsForm));
         }
 
-        /*private async void BtnGetData_Click(object sender, RoutedEventArgs e)
-        {
-            String data = await WCFRestServiceCall("POST", "GetData", "19");
-
-            var dialog = new MessageDialog(data);
-            await dialog.ShowAsync();
-        }*/
-
         public Boolean isIP(String ipStr)
         {
             Match match = Regex.Match(ipStr, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
             return match.Success;
+        }
+
+        private void BrowsePage_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(WebPageLink));
+        }
+
+        private void ListBoxDownloadFile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Film f = ListBoxDownloadFile.SelectedItem as Film;
+
+            if (f != null)
+            {
+                System.Diagnostics.Debug.WriteLine(f.FilmTitle + " " + f.FilmPourcent);
+            }
         }
     }
 }

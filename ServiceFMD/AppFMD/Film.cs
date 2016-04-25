@@ -3,25 +3,28 @@
 namespace AppFMD
 {
     [DataContract]
-    public class Film
+    public partial class Film
     {
         [DataMember]
-        public int FilmID { get; set; }
+        public int FilmId { get; set; }
 
         [DataMember]
-        public string FilmName { get; set; }
+        public string FilmTitle { get; set; }
 
         [DataMember]
         public string FilmLink { get; set; }
 
         [DataMember]
-        public float FilmProgression { get; set; }
+        public int FilmPourcent { get; set; }
+
+        [DataMember]
+        public string FilmExtension { get; set; }
 
         public string FilmProgressionAffichage
         {
             get
             {
-                return this.FilmProgression + "%";
+                return this.FilmPourcent + "%";
             }
         }
     }
