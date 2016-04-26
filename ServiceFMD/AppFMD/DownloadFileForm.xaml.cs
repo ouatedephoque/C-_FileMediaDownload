@@ -72,7 +72,7 @@ namespace AppFMD
         {
             //if (isIP(settings.IpComputer))
             //{
-            string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName + "";
+            string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName + "";
             //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "";
             HttpClient httpClient = new HttpClient();
 

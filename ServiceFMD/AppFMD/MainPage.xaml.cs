@@ -69,9 +69,10 @@ namespace AppFMD
 
         private async Task<MemoryStream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
         {
-            //if (isIP(settings.IpComputer))
-            //{
-                string ServiceURI = "http://" + settings.IpComputer + ":51589/FilmRESTService.svc/" + methodName;
+            if (isIP(settings.IpComputer))
+            {
+                string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName;
+                System.Diagnostics.Debug.WriteLine(ServiceURI);
                 //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
                 HttpClient httpClient = new HttpClient();
 
@@ -89,8 +90,8 @@ namespace AppFMD
                 MemoryStream stream = new MemoryStream(data);
 
                 return stream;
-            //}
-            //return null;
+            }
+            return null;
         }
 
         private async void GetListFilmsComputer()
@@ -112,10 +113,13 @@ namespace AppFMD
                 List<Film> list = (List<Film>)serializer.ReadObject(memStream);
                 listAllFilms.Clear();
 
-                foreach (Film f in list)
+                if (list != null)
                 {
-                    listAllFilms.Add(f);
-                    System.Diagnostics.Debug.WriteLine(f.FilmId + " " + f.FilmPourcent);
+                    foreach (Film f in list)
+                    {
+                        listAllFilms.Add(f);
+                        System.Diagnostics.Debug.WriteLine(f.FilmId + " " + f.FilmPourcent);
+                    }
                 }
             }
         }
