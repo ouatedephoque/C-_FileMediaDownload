@@ -3,6 +3,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
+using System;
 
 // Pour en savoir plus sur le modèle d’élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkID=390556
 
@@ -21,7 +22,8 @@ namespace AppFMD
 
             this.settings = new Settings();
 
-            TextIpPC.Text = settings.IpComputer;
+            String[] ip = settings.IpComputer.Split(':');
+            TextIpPC.Text = ip[0];
 
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }

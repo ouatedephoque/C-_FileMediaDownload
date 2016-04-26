@@ -9,16 +9,24 @@ namespace ServiceFMD
     [DataContract]
     public class Film
     {
-        [DataMember]
+        public Film()
+        {
+
+        }
+
+        [DataMember(Name = "FilmID")]
         public int FilmID { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "FilmName")]
         public string FilmName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "FilmLink")]
         public string FilmLink { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "FilmProgression")]
         public float FilmProgression { get; set; }
+
+        [DataMember(Name = "FilmExtension")]
+        public string FilmExtension { get; set; }
     }
 }

@@ -12,12 +12,18 @@
         <CommandBar>
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Add" Name="AddNewFileDownloadPage" Click="AddNewFileDownloadPage_Click"/>
+                <AppBarButton Icon="Upload" Name="BrowsePage" Click="BrowsePage_Click" />
                 <AppBarButton Icon="Setting" Name="SettingsPage" Click="SettingsPage_Click" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
     <Grid>
-        <ListBox Name="ListBoxDownloadFile" Margin="10 10 10 10" ItemsSource="{Binding}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="White">
+        <ListBox Name="ListBoxDownloadFile" Margin="10 10 10 10" ItemsSource="{Binding}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="White" SelectionChanged="ListBoxDownloadFile_SelectionChanged">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -26,11 +32,13 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Titre" Grid.Row="0" FontSize="28" />
-                        <TextBlock Text="Progression" Grid.Row="1" FontSize="28" />
+                        <TextBlock Text="{Binding FilmTitle}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="28" />
+                        <ProgressBar Value="{Binding FilmPourcent}" Grid.Row="1" Grid.Column="0" />
+                        <TextBlock Text="{Binding FilmProgressionAffichage}" Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" FontSize="28" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
