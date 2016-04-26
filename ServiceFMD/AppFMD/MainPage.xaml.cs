@@ -46,7 +46,7 @@ namespace AppFMD
 
             this.listAllFilms = new ObservableCollection<Film>();
 
-            GetListFilmsComputer();
+            //GetListFilmsComputer();
 
             ListBoxDownloadFile.ItemsSource = this.listAllFilms;
         }
@@ -153,6 +153,11 @@ namespace AppFMD
             {
                 System.Diagnostics.Debug.WriteLine(f.FilmTitle + " " + f.FilmPourcent);
             }
+        }
+
+        private void RefreshData_Click(object sender, RoutedEventArgs e)
+        {
+            LoadFilmsList();
         }
     }
 }

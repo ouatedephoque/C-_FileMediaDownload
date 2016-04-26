@@ -54,7 +54,7 @@ namespace AppFMD
         {
             get
             {
-                return GetValueOrDefault<String>(IpComputerKeyName, IpComputerDefault) + ":51000";
+                return GetValueOrDefault<String>(IpComputerKeyName, IpComputerDefault) + ":51589";
             }
             set
             {
