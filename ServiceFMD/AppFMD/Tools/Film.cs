@@ -20,6 +20,9 @@ namespace AppFMD
         [DataMember]
         public string FilmExtension { get; set; }
 
+        [DataMember]
+        public string FilmPathPC { get; set; }
+
         public string FilmProgressionAffichage
         {
             get

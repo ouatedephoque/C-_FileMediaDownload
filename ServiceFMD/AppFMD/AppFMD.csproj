@@ -87,6 +87,7 @@
     <Compile Include="DownloadFileForm.xaml.cs">
       <DependentUpon>DownloadFileForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tools\DbTools.cs" />
     <Compile Include="Tools\Film.cs" />
     <Compile Include="Tools\FilmTools.cs" />
     <Compile Include="MainPage.xaml.cs">

@@ -2,7 +2,6 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
 using System;
 
 // Pour en savoir plus sur le modèle d’élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkID=390556
@@ -20,10 +19,11 @@ namespace AppFMD
         {
             this.InitializeComponent();
 
-            this.settings = new Settings();
+            this.settings = Settings.Instance;
 
             String[] ip = settings.IpComputer.Split(':');
             TextIpPC.Text = ip[0];
+            TextPathPC.Text = settings.PathComputer;
 
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
@@ -55,6 +55,7 @@ namespace AppFMD
         private void BtnSaveParameters_Click(object sender, RoutedEventArgs e)
         {
             settings.IpComputer = TextIpPC.Text.ToString();
+            settings.PathComputer = TextPathPC.Text.ToString();
 
             GoPrevious();
         }

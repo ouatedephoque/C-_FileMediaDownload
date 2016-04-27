@@ -13,13 +13,28 @@ namespace AppFMD
 
         // Clé des paramètres
         private const String IpComputerKeyName = "IPComputer";
+        private const String PathComputerKeyName = "PathComputer";
 
         // Valeurs par défaut
         private String IpComputerDefault = "";
+        private String PathComputerDefault = "";
 
-        public Settings()
+        private static Settings instance;
+
+        private Settings()
         {
             this.Parameters = ApplicationData.Current.LocalSettings;
+        }
+
+        public static Settings Instance
+        {
+            get{
+                if(instance == null)
+                {
+                    instance = new Settings();
+                }
+                return instance;
+            }
         }
 
         private void SaveOrAddParameters(string name, string value)
@@ -59,6 +74,18 @@ namespace AppFMD
             set
             {
                 SaveOrAddParameters(IpComputerKeyName, value);
+            }
+        }
+
+        public String PathComputer
+        {
+            get
+            {
+                return GetValueOrDefault<String>(PathComputerKeyName, PathComputerDefault);
+            }
+            set
+            {
+                SaveOrAddParameters(PathComputerKeyName, value);
             }
         }
     }

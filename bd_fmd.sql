@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Lun 25 Avril 2016 à 19:21
+-- Généré le :  Mer 27 Avril 2016 à 14:50
 -- Version du serveur :  5.6.17
 -- Version de PHP :  5.5.12
 
@@ -32,15 +32,9 @@ CREATE TABLE IF NOT EXISTS `film` (
   `FilmLink` text NOT NULL,
   `FilmPourcent` int(11) NOT NULL,
   `FilmExtension` varchar(4) NOT NULL,
+  `FilmPathPC` varchar(255) NOT NULL,
   PRIMARY KEY (`FilmId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
-
---
--- Contenu de la table `film`
---
-
-INSERT INTO `film` (`FilmId`, `FilmTitle`, `FilmLink`, `FilmPourcent`, `FilmExtension`) VALUES
-(5, 'Star Wars VII', 'http://dl5.downloadha.com/hosein/Movie/March 2016/Star.Wars.Episode.VII.The.Force.Awakens.2015.720p.BrRip.x265-PSA_www.Downloadha.com_.mkv', 0, 'mkv');
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=47 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

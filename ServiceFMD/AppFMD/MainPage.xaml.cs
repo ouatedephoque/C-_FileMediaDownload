@@ -1,29 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Services.Maps;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Runtime.InteropServices;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -42,7 +25,7 @@ namespace AppFMD
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            this.settings = new Settings();
+            this.settings = Settings.Instance;
 
             this.listAllFilms = new ObservableCollection<Film>();
 
@@ -67,37 +50,6 @@ namespace AppFMD
             // cet événement est géré automatiquement.
         }
 
-        private async Task<MemoryStream> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
-        {
-            if (isIP(settings.IpComputer))
-            {
-                string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName;
-                System.Diagnostics.Debug.WriteLine(ServiceURI);
-                //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
-
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.IfModifiedSince = DateTimeOffset.Now;
-
-                    HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
-
-                    if (!string.IsNullOrEmpty(bodyParam))
-                    {
-                        request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
-                    }
-
-                    HttpResponseMessage response = await httpClient.SendAsync(request);
-
-                    string returnString = await response.Content.ReadAsStringAsync();
-                    byte[] data = Encoding.UTF8.GetBytes(returnString);
-                    MemoryStream stream = new MemoryStream(data);
-
-                    return stream;
-                }
-            }
-            return null;
-        }
-
         private async void GetListFilmsComputer()
         {
             while(true)
@@ -110,7 +62,7 @@ namespace AppFMD
         private async void LoadFilmsList()
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Film>));
-            MemoryStream memStream = await WCFRestServiceCall("GET", "GetFilmList/", "");
+            MemoryStream memStream = await DbTools.WCFRestServiceCall(settings, "GET", "GetFilmList/", "");
 
             if (memStream != null)
             {
@@ -122,7 +74,6 @@ namespace AppFMD
                     foreach (Film f in list)
                     {
                         listAllFilms.Add(f);
-                        System.Diagnostics.Debug.WriteLine(f.FilmId + " " + f.FilmPourcent);
                     }
                 }
             }
@@ -138,12 +89,6 @@ namespace AppFMD
             Frame.Navigate(typeof(SettingsForm));
         }
 
-        public Boolean isIP(String ipStr)
-        {
-            Match match = Regex.Match(ipStr, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
-            return match.Success;
-        }
-
         private void BrowsePage_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(WebPageLink));
@@ -152,11 +97,6 @@ namespace AppFMD
         private void ListBoxDownloadFile_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Film f = ListBoxDownloadFile.SelectedItem as Film;
-
-            if (f != null)
-            {
-                System.Diagnostics.Debug.WriteLine(f.FilmTitle + " " + f.FilmPourcent);
-            }
         }
 
         private void RefreshData_Click(object sender, RoutedEventArgs e)

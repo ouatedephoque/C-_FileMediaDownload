@@ -1,22 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Phone.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // Pour en savoir plus sur le modèle d’élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkID=390556
@@ -35,7 +22,7 @@ namespace AppFMD
         {
             this.InitializeComponent();
 
-            this.settings = new Settings();
+            this.settings = Settings.Instance;
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
 
@@ -68,36 +55,6 @@ namespace AppFMD
             TextBoxUrl.Text = this.filmToDownload.FilmLink;
         }
 
-        private async Task<String> WCFRestServiceCall(String methodRequestType, String methodName, String bodyParam = "")
-        {
-            //if (isIP(settings.IpComputer))
-            //{
-            string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName + "";
-            //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "";
-            HttpClient httpClient = new HttpClient();
-
-            HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
-
-            if (!string.IsNullOrEmpty(bodyParam))
-            {
-                request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
-            }
-            System.Diagnostics.Debug.WriteLine(bodyParam);
-
-            System.Diagnostics.Debug.WriteLine(request.Content);
-            System.Diagnostics.Debug.WriteLine(request.ToString());
-
-            HttpResponseMessage response = await httpClient.SendAsync(request);
-
-            string returnString = await response.Content.ReadAsStringAsync();
-            byte[] data = Encoding.UTF8.GetBytes(returnString);
-            MemoryStream stream = new MemoryStream(data);
-
-            return returnString;
-            //}
-            //return null;
-        }
-
         private async void ButtonDownload_Click(object sender, RoutedEventArgs e)
         {
             String url = TextBoxUrl.Text;
@@ -106,6 +63,7 @@ namespace AppFMD
             this.filmToDownload.FilmLink = url;
             this.filmToDownload.FilmPourcent = 0;
             this.filmToDownload.FilmExtension = FilmTools.getExtensionFilmOrDefault(url);
+            this.filmToDownload.FilmPathPC = settings.PathComputer;
 
             MemoryStream stream = new MemoryStream();
             DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Film));
@@ -113,9 +71,7 @@ namespace AppFMD
             stream.Position = 0;
             StreamReader reader = new StreamReader(stream);
             
-            String memStream = await WCFRestServiceCall("POST", "PostAddFilm/New", reader.ReadToEnd());
-            
-            System.Diagnostics.Debug.WriteLine(memStream);
+            MemoryStream memStream = await DbTools.WCFRestServiceCall(settings, "POST", "PostAddFilm/New", reader.ReadToEnd());
         }
     }
 }
