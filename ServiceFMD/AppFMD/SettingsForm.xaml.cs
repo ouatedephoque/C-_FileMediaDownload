@@ -31,6 +31,7 @@ namespace AppFMD
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
             GoPrevious();
+            e.Handled = true;
         }
 
         private void GoPrevious()

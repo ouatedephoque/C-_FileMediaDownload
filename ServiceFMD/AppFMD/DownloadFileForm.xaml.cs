@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using Windows.Data.Xml.Dom;
 using Windows.Phone.UI.Input;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -58,20 +60,40 @@ namespace AppFMD
         private async void ButtonDownload_Click(object sender, RoutedEventArgs e)
         {
             String url = TextBoxUrl.Text;
+            String title = TextBoxTitle.Text;
 
-            this.filmToDownload.FilmTitle = TextBoxTitle.Text.ToString();
-            this.filmToDownload.FilmLink = url;
-            this.filmToDownload.FilmPourcent = 0;
-            this.filmToDownload.FilmExtension = FilmTools.getExtensionFilmOrDefault(url);
-            this.filmToDownload.FilmPathPC = settings.PathComputer;
+            if (!url.Equals("") && !title.Equals(""))
+            {
+                this.filmToDownload.FilmTitle = title;
+                this.filmToDownload.FilmLink = url;
+                this.filmToDownload.FilmPourcent = 0;
+                this.filmToDownload.FilmExtension = FilmTools.getExtensionFilmOrDefault(url);
+                this.filmToDownload.FilmPathPC = settings.PathComputer;
 
-            MemoryStream stream = new MemoryStream();
-            DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Film));
-            jsonSerializer.WriteObject(stream, this.filmToDownload);
-            stream.Position = 0;
-            StreamReader reader = new StreamReader(stream);
-            
-            MemoryStream memStream = await DbTools.WCFRestServiceCall(settings, "POST", "PostAddFilm/New", reader.ReadToEnd());
+                MemoryStream stream = new MemoryStream();
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Film));
+                jsonSerializer.WriteObject(stream, this.filmToDownload);
+                stream.Position = 0;
+                StreamReader reader = new StreamReader(stream);
+
+                MemoryStream memStream = await DbTools.WCFRestServiceCall(settings, "POST", "PostAddFilm/New", reader.ReadToEnd());
+
+                Frame rootFrame = Window.Current.Content as Frame;
+
+                if (rootFrame != null && rootFrame.CanGoBack)
+                {
+                    rootFrame.GoBack();
+                }
+            }
+            else
+            {
+                ToastTemplateType toastTemplate = ToastTemplateType.ToastText01;
+                XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
+                XmlNodeList textElements = toastXml.GetElementsByTagName("text");
+                textElements[0].AppendChild(toastXml.CreateTextNode("Veuillez remplir les deux champs"));
+                var toast = new ToastNotification(toastXml);
+                ToastNotificationManager.CreateToastNotifier().Show(toast);
+            }
         }
     }
 }
