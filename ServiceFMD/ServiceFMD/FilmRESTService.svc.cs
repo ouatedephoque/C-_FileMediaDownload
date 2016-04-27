@@ -24,7 +24,11 @@ namespace ServiceFMD
             using (var ctx = new FMDModel())
             {
                 films = ctx.film.ToList();
-                ctx.Dispose();
+
+                foreach(Film f in films)
+                {
+                    ctx.Entry(f).Reload();
+                }
             }
 
             return films;

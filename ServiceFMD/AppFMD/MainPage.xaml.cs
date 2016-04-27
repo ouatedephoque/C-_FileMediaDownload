@@ -46,7 +46,7 @@ namespace AppFMD
 
             this.listAllFilms = new ObservableCollection<Film>();
 
-            //GetListFilmsComputer();
+            GetListFilmsComputer();
 
             ListBoxDownloadFile.ItemsSource = this.listAllFilms;
         }
@@ -74,22 +74,26 @@ namespace AppFMD
                 string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName;
                 System.Diagnostics.Debug.WriteLine(ServiceURI);
                 //string ServiceURI = "http://localhost:51588/FilmRESTService.svc/" + methodName + "/";
-                HttpClient httpClient = new HttpClient();
 
-                HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
-
-                if (!string.IsNullOrEmpty(bodyParam))
+                using (HttpClient httpClient = new HttpClient())
                 {
-                    request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
+                    httpClient.DefaultRequestHeaders.IfModifiedSince = DateTimeOffset.Now;
+
+                    HttpRequestMessage request = new HttpRequestMessage(methodRequestType == "GET" ? HttpMethod.Get : HttpMethod.Post, ServiceURI);
+
+                    if (!string.IsNullOrEmpty(bodyParam))
+                    {
+                        request.Content = new StringContent(bodyParam, Encoding.UTF8, "application/json");
+                    }
+
+                    HttpResponseMessage response = await httpClient.SendAsync(request);
+
+                    string returnString = await response.Content.ReadAsStringAsync();
+                    byte[] data = Encoding.UTF8.GetBytes(returnString);
+                    MemoryStream stream = new MemoryStream(data);
+
+                    return stream;
                 }
-
-                HttpResponseMessage response = await httpClient.SendAsync(request);
-
-                string returnString = await response.Content.ReadAsStringAsync();
-                byte[] data = Encoding.UTF8.GetBytes(returnString);
-                MemoryStream stream = new MemoryStream(data);
-
-                return stream;
             }
             return null;
         }
@@ -99,7 +103,7 @@ namespace AppFMD
             while(true)
             {
                 LoadFilmsList();
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
 
