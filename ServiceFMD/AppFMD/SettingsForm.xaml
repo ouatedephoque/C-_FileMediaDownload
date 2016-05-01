@@ -13,15 +13,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="8*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="URL PC : " FontSize="20" VerticalAlignment="Center" />
         <TextBox x:Name="TextIpPC" Grid.Row="0" Grid.Column="1" InputScope="Number" KeyUp="TextIpPC_KeyUp" />
 
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Chemin dossier : " FontSize="20" VerticalAlignment="Center" />
+        <TextBox x:Name="TextPathPC" Grid.Row="1" Grid.Column="1" />
+        
         <Button x:Name="BtnSaveParameters" HorizontalAlignment="Center" Width="{Binding ElementName=WindowSettings, Path=ActualWidth}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Enregistrer paramètres" Click="BtnSaveParameters_Click" />
     </Grid>
 </Page>

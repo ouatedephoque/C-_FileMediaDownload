@@ -23,7 +23,12 @@ namespace ServiceFMD
 
             using (var ctx = new FMDModel())
             {
-                films = ctx.film.AsNoTracking().ToList();
+                films = ctx.film.ToList();
+
+                foreach(Film f in films)
+                {
+                    ctx.Entry(f).Reload();
+                }
             }
 
             return films;
@@ -55,9 +60,8 @@ namespace ServiceFMD
                 dictionnaryFilmWebClient.Add(wc, film);
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadDataCompleted += Wc_DownloadDataCompleted;
-
-                String user = OperationContext.Current.ServiceSecurityContext.PrimaryIdentity.Name;
-                wc.DownloadFileAsync(new System.Uri(film.FilmLink), "C:\\Users\\" + user + "\\Videos\\FMD\\"+(film.FilmTitle) +"."+(film.FilmExtension));
+                
+                wc.DownloadFileAsync(new System.Uri(film.FilmLink), film.FilmPathPC + "\\"+(film.FilmTitle) +"."+(film.FilmExtension));
             }
         }
 

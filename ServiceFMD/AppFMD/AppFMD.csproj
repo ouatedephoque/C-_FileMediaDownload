@@ -87,6 +87,7 @@
     <Compile Include="DownloadFileForm.xaml.cs">
       <DependentUpon>DownloadFileForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tools\DbTools.cs" />
     <Compile Include="Tools\Film.cs" />
     <Compile Include="Tools\FilmTools.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -107,6 +108,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Logo.scale-100.png" />
+    <Content Include="Assets\Logo.scale-140.png" />
+    <Content Include="Assets\Logo.scale-150.png" />
     <Content Include="Assets\Logo.scale-240.png" />
     <Content Include="Assets\SmallLogo.scale-240.png" />
     <Content Include="Assets\SplashScreen.scale-240.png" />

@@ -32,5 +32,10 @@ namespace ServiceFMD
         [Required]
         [StringLength(4)]
         public string FilmExtension { get; set; }
+
+        [DataMember]
+        [Required]
+        [StringLength(255)]
+        public string FilmPathPC { get; set; }
     }
 }
