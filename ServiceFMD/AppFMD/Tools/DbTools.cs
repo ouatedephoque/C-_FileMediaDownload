@@ -10,7 +10,7 @@ namespace AppFMD
     {
         public static async Task<MemoryStream> WCFRestServiceCall(Settings settings, String methodRequestType, String methodName, String bodyParam = "")
         {
-            if (!settings.IpComputer.Equals(""))
+            if (!settings.IpComputer.Equals(":51589"))
             {
                 string ServiceURI = "http://" + settings.IpComputer + "/FilmRESTService.svc/" + methodName + "";
 

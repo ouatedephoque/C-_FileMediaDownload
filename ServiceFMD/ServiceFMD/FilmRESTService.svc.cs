@@ -37,22 +37,14 @@ namespace ServiceFMD
         public List<Film> PostAddFilm(Film f)
         {
             List<Film> films = new List<Film>();
-            bool isExisting = false;
 
             using (var ctx = new FMDModel())
             {
                 films = ctx.film.ToList();
 
-                foreach (Film film in films)
-                {
-                    if(film.FilmLink.Equals(f.FilmLink) || film.FilmTitle.Equals(f.FilmTitle))
-                    {
-                        isExisting = true;
-                        break;
-                    }
-                }
+                int isExisting = ctx.film.Where(fi => fi.FilmLink.Equals(f.FilmLink)).ToList().Count;
 
-                if(isExisting)
+                if(isExisting > 0)
                 {
                     Console.WriteLine("Film existant !");
                     return null;
